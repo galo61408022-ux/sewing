@@ -3,7 +3,7 @@ import { ArrowLeft, Printer } from 'lucide-react';
 import { useData } from '../context/DataContext';
 import { useRoleNav } from '../lib/useRoleNav';
 import { formatDate, formatCurrency } from '../lib/utils';
-import { StatusBadge } from '../components/ui/Badge';
+import { StatusBadge } from '../components/ui/badge';
 
 export default function CustomerDetailPage() {
   const { id } = useParams<{ id: string }>();

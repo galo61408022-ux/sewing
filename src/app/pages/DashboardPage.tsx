@@ -3,7 +3,7 @@ import { StatCard } from '../components/ui/StatCard';
 import { RevenueChart } from '../components/charts/RevenueChart';
 import { OrderStatusChart } from '../components/charts/OrderStatusChart';
 import { InventoryChart } from '../components/charts/InventoryChart';
-import { StatusBadge, PriorityBadge } from '../components/ui/Badge';
+import { StatusBadge, PriorityBadge } from '../components/ui/badge';
 import { useData } from '../context/DataContext';
 import { useAuth } from '../context/AuthContext';
 import { canAccess } from '../lib/permissions';

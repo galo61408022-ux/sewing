@@ -3,7 +3,7 @@ import { ArrowLeft, Printer } from 'lucide-react';
 import { useData } from '../context/DataContext';
 import { useRoleNav } from '../lib/useRoleNav';
 import { formatDate, formatCurrency } from '../lib/utils';
-import { StatusBadge, PriorityBadge } from '../components/ui/Badge';
+import { StatusBadge, PriorityBadge } from '../components/ui/badge';
 
 const STATUS_FLOW = ['Pending', 'Cutting', 'Sewing', 'Finishing', 'Ready', 'Delivered'];
 

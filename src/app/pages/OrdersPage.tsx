@@ -6,7 +6,7 @@ import { useAuth } from '../context/AuthContext';
 import { useRoleNav } from '../lib/useRoleNav';
 import { Modal } from '../components/ui/Modal';
 import { SearchInput } from '../components/ui/SearchInput';
-import { StatusBadge, PriorityBadge } from '../components/ui/Badge';
+import { StatusBadge, PriorityBadge } from '../components/ui/badge';
 import { formatDate, formatCurrency, generateId, isOverdue, isDueToday } from '../lib/utils';
 import type { Order, OrderStatus, Priority, GarmentType } from '../lib/types';
 

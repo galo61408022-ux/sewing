@@ -3,7 +3,7 @@ import { Download, Printer } from 'lucide-react';
 import { useData } from '../context/DataContext';
 import { RevenueChart } from '../components/charts/RevenueChart';
 import { OrderStatusChart } from '../components/charts/OrderStatusChart';
-import { StatusBadge } from '../components/ui/Badge';
+import { StatusBadge } from '../components/ui/badge';
 import { formatDate, formatCurrency, downloadJson } from '../lib/utils';
 
 type ReportType = 'sales' | 'orders' | 'customers' | 'inventory';
