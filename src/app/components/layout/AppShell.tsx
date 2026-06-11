@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Outlet, useLocation } from 'react-router';
 import { Sidebar } from './Sidebar';
 import { Topbar } from './Topbar';
+import { stripRolePrefix } from '../../lib/router';
 
 const TITLES: Record<string, string> = {
   '/dashboard': 'Dashboard',
@@ -18,7 +19,8 @@ const TITLES: Record<string, string> = {
 export function AppShell() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { pathname } = useLocation();
-  const base = '/' + pathname.split('/')[1];
+  const stripped = stripRolePrefix(pathname);
+  const base = '/' + stripped.split('/')[1];
   const title = TITLES[base] ?? 'ATI Sewing & Fabric';
 
   return (

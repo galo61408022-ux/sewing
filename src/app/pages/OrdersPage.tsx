@@ -3,6 +3,7 @@ import { Plus, Eye, Edit2, Trash2 } from 'lucide-react';
 import { useNavigate } from 'react-router';
 import { useData } from '../context/DataContext';
 import { useAuth } from '../context/AuthContext';
+import { useRoleNav } from '../lib/useRoleNav';
 import { Modal } from '../components/ui/Modal';
 import { SearchInput } from '../components/ui/SearchInput';
 import { StatusBadge, PriorityBadge } from '../components/ui/Badge';
@@ -23,6 +24,7 @@ export default function OrdersPage() {
   const { customers, orders, staff, addOrder, updateOrder, deleteOrder, logActivity } = useData();
   const { role } = useAuth();
   const navigate = useNavigate();
+  const toRole = useRoleNav();
   const [search, setSearch] = useState('');
   const [filterStatus, setFilterStatus] = useState('');
   const [modal, setModal] = useState<'add' | 'edit' | 'status' | null>(null);
@@ -141,7 +143,7 @@ export default function OrdersPage() {
                     <td className="px-3 py-3"><StatusBadge status={o.status} /></td>
                     <td className="px-3 py-3">
                       <div className="flex items-center gap-1">
-                        <button onClick={() => navigate(`/orders/${o.id}`)} className="p-1.5 rounded hover:bg-secondary transition-colors text-muted-foreground hover:text-foreground"><Eye size={13} /></button>
+                        <button onClick={() => navigate(toRole(`/orders/${o.id}`))} className="p-1.5 rounded hover:bg-secondary transition-colors text-muted-foreground hover:text-foreground"><Eye size={13} /></button>
                         {(canEdit || role === 'tailor') && (
                           <button onClick={() => { setSelected(o); setNewStatus(o.status); setModal('status'); }} className="p-1.5 rounded hover:bg-secondary transition-colors text-muted-foreground hover:text-foreground text-xs px-2" title="Update status">↑</button>
                         )}

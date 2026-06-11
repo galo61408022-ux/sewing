@@ -5,12 +5,18 @@ import { OrderStatusChart } from '../components/charts/OrderStatusChart';
 import { InventoryChart } from '../components/charts/InventoryChart';
 import { StatusBadge, PriorityBadge } from '../components/ui/Badge';
 import { useData } from '../context/DataContext';
+import { useAuth } from '../context/AuthContext';
+import { canAccess } from '../lib/permissions';
+import type { Role } from '../lib/types';
 import { formatCurrency, formatDate, isDueToday, isOverdue } from '../lib/utils';
+import { useRoleNav } from '../lib/useRoleNav';
 import { useNavigate } from 'react-router';
 
 export default function DashboardPage() {
   const { customers, orders, payments, inventory } = useData();
+  const { role } = useAuth();
   const navigate = useNavigate();
+  const toRole = useRoleNav();
 
   const totalSales = payments.reduce((s, p) => s + p.amountPaid, 0);
   const outstanding = payments.reduce((s, p) => s + p.balance, 0);
@@ -18,6 +24,7 @@ export default function DashboardPage() {
   const readyOrders = orders.filter(o => o.status === 'Ready');
   const lowStock = inventory.filter(i => i.quantity <= i.lowStockThreshold);
   const activeOrders = orders.filter(o => !['Delivered', 'Cancelled'].includes(o.status));
+  const canOpenInventory = role ? canAccess(role as Role, '/inventory') : false;
 
   const recent = [...orders].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()).slice(0, 8);
 
@@ -55,7 +62,7 @@ export default function DashboardPage() {
       <div className="bg-card border border-border rounded-lg">
         <div className="flex items-center justify-between px-5 py-4 border-b border-border">
           <h3 className="text-sm" style={{ fontFamily: 'var(--font-display)', fontWeight: 600 }}>Recent Orders</h3>
-          <button onClick={() => navigate('/orders')} className="text-xs text-accent hover:underline">View all</button>
+          <button onClick={() => navigate(toRole('/orders'))} className="text-xs text-accent hover:underline">View all</button>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full">
@@ -73,7 +80,7 @@ export default function DashboardPage() {
                 return (
                   <tr
                     key={order.id}
-                    onClick={() => navigate(`/orders/${order.id}`)}
+                    onClick={() => navigate(toRole(`/orders/${order.id}`))}
                     className="border-b border-border/50 hover:bg-secondary/40 cursor-pointer transition-colors"
                   >
                     <td className="px-4 py-3 text-xs text-accent" style={{ fontFamily: 'var(--font-mono)' }}>{order.orderNumber}</td>
@@ -98,12 +105,12 @@ export default function DashboardPage() {
       </div>
 
       {/* Low stock alert */}
-      {lowStock.length > 0 && (
+      {lowStock.length > 0 && canOpenInventory && (
         <div className="bg-destructive/5 border border-destructive/20 rounded-lg p-4">
           <div className="text-sm text-destructive mb-2" style={{ fontFamily: 'var(--font-display)', fontWeight: 600 }}>Low Stock Alert</div>
           <div className="flex flex-wrap gap-2">
             {lowStock.map(item => (
-              <button key={item.id} onClick={() => navigate('/inventory')} className="text-xs px-3 py-1.5 bg-white border border-destructive/20 rounded-full text-destructive hover:bg-destructive/5 transition-colors" style={{ fontFamily: 'var(--font-mono)' }}>
+              <button key={item.id} onClick={() => navigate(toRole('/inventory'))} className="text-xs px-3 py-1.5 bg-white border border-destructive/20 rounded-full text-destructive hover:bg-destructive/5 transition-colors" style={{ fontFamily: 'var(--font-mono)' }}>
                 {item.name} — {item.quantity} left
               </button>
             ))}

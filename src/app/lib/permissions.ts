@@ -16,6 +16,14 @@ export const ROLE_COLORS: Record<Role, string> = {
   manager: 'bg-orange-100 text-orange-700',
 };
 
+export const ROLE_BASE_PATHS: Record<Role, string> = {
+  admin: '/admin',
+  reception: '/reception',
+  tailor: '/tailor',
+  inventory: '/inventory',
+  manager: '/manager',
+};
+
 const permissions: Record<Role, Set<string>> = {
   admin: new Set([
     '/dashboard',
@@ -36,7 +44,6 @@ const permissions: Record<Role, Set<string>> = {
   ]),
   tailor: new Set([
     '/dashboard',
-    '/customers',
     '/measurements',
     '/orders',
   ]),
@@ -47,16 +54,40 @@ const permissions: Record<Role, Set<string>> = {
   ]),
   manager: new Set([
     '/dashboard',
-    '/customers',
     '/orders',
     '/payments',
-    '/inventory',
-    '/staff',
     '/reports',
   ]),
 };
 
+function normalizePath(path: string): string {
+  if (!path.startsWith('/')) return path;
+  const firstSegment = `/${path.split('/')[1]}`;
+  const basePaths = new Set(Object.values(ROLE_BASE_PATHS));
+  if (!basePaths.has(firstSegment)) return path;
+
+  const rest = path.slice(firstSegment.length) || '/dashboard';
+  if (rest === '/') return '/dashboard';
+
+  const parts = rest.split('/').filter(Boolean);
+  if (parts.length === 0) return '/dashboard';
+  return `/${parts[0]}`;
+}
+
+export function buildRolePath(role: Role, path: string): string {
+  return `${ROLE_BASE_PATHS[role]}${path.startsWith('/') ? path : `/${path}`}`;
+}
+
+export function getRoleHomePath(role: Role): string {
+  return buildRolePath(role, '/dashboard');
+}
+
+export function isPathForRole(role: Role, path: string): boolean {
+  const base = ROLE_BASE_PATHS[role];
+  return path === base || path.startsWith(`${base}/`);
+}
+
 export function canAccess(role: Role, path: string): boolean {
   if (!role) return false;
-  return permissions[role]?.has(path) ?? false;
+  return permissions[role]?.has(normalizePath(path)) ?? false;
 }

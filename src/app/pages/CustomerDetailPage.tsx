@@ -1,12 +1,14 @@
 import { useParams, useNavigate } from 'react-router';
 import { ArrowLeft, Printer } from 'lucide-react';
 import { useData } from '../context/DataContext';
+import { useRoleNav } from '../lib/useRoleNav';
 import { formatDate, formatCurrency } from '../lib/utils';
 import { StatusBadge } from '../components/ui/Badge';
 
 export default function CustomerDetailPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const toRole = useRoleNav();
   const { customers, measurements, orders, payments } = useData();
 
   const customer = customers.find(c => c.id === id);
@@ -19,7 +21,7 @@ export default function CustomerDetailPage() {
     return (
       <div className="text-center py-20">
         <div className="text-sm text-muted-foreground">Customer not found.</div>
-        <button onClick={() => navigate('/customers')} className="mt-3 text-sm text-accent hover:underline">← Back to customers</button>
+        <button onClick={() => navigate(toRole('/customers'))} className="mt-3 text-sm text-accent hover:underline">← Back to customers</button>
       </div>
     );
   }
@@ -28,7 +30,7 @@ export default function CustomerDetailPage() {
     <div className="space-y-5 print:space-y-4">
       {/* Header */}
       <div className="flex items-center justify-between no-print">
-        <button onClick={() => navigate('/customers')} className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors">
+        <button onClick={() => navigate(toRole('/customers'))} className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors">
           <ArrowLeft size={14} /> Customers
         </button>
         <button onClick={() => window.print()} className="flex items-center gap-1.5 px-3 py-2 text-sm border border-border rounded-lg hover:bg-secondary transition-colors">
@@ -75,7 +77,7 @@ export default function CustomerDetailPage() {
         <div className="bg-card border border-border rounded-lg p-5">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-sm" style={{ fontFamily: 'var(--font-display)', fontWeight: 600 }}>Latest Measurements</h3>
-            <button onClick={() => navigate('/measurements')} className="text-xs text-accent hover:underline">{custMeasurements.length} records</button>
+            <button onClick={() => navigate(toRole('/measurements'))} className="text-xs text-accent hover:underline">{custMeasurements.length} records</button>
           </div>
           {latestMeasurement ? (
             <div>
@@ -102,7 +104,7 @@ export default function CustomerDetailPage() {
           {custOrders.length > 0 ? (
             <div className="space-y-2">
               {custOrders.map(o => (
-                <button key={o.id} onClick={() => navigate(`/orders/${o.id}`)} className="w-full flex items-center justify-between text-left p-3 rounded-lg border border-border/50 hover:bg-secondary/40 transition-colors">
+                <button key={o.id} onClick={() => navigate(toRole(`/orders/${o.id}`))} className="w-full flex items-center justify-between text-left p-3 rounded-lg border border-border/50 hover:bg-secondary/40 transition-colors">
                   <div>
                     <div className="text-xs text-accent" style={{ fontFamily: 'var(--font-mono)' }}>{o.orderNumber}</div>
                     <div className="text-sm text-foreground">{o.garmentType} — {o.fabricType}</div>

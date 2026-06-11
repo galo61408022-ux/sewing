@@ -2,14 +2,8 @@ import { useState, type FormEvent } from 'react';
 import { useNavigate } from 'react-router';
 import { Scissors, Eye, EyeOff } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
-
-const DEMO_ACCOUNTS = [
-  { username: 'admin', password: 'admin123', role: 'Administrator' },
-  { username: 'reception', password: 'rec123', role: 'Reception' },
-  { username: 'tailor', password: 'tai123', role: 'Tailor' },
-  { username: 'inventory', password: 'inv123', role: 'Inventory' },
-  { username: 'manager', password: 'mgr123', role: 'Manager' },
-];
+import { DEMO_ACCOUNTS } from '../lib/auth';
+import { getRoleHomePath } from '../lib/permissions';
 
 export default function LoginPage() {
   const { login } = useAuth();
@@ -20,19 +14,25 @@ export default function LoginPage() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
-  function handleSubmit(e: FormEvent) {
+  async function handleSubmit(e: FormEvent) {
     e.preventDefault();
     setLoading(true);
     setError('');
-    setTimeout(() => {
-      const ok = login(username.trim(), password);
+    try {
+      const ok = await login(username.trim(), password);
       if (ok) {
-        navigate('/dashboard');
+        const account = DEMO_ACCOUNTS.find(a => a.username === username.trim());
+        if (account) {
+          navigate(getRoleHomePath(account.role));
+        }
       } else {
         setError('Invalid username or password.');
         setLoading(false);
       }
-    }, 300);
+    } catch (err) {
+      setError('Login failed. Please try again.');
+      setLoading(false);
+    }
   }
 
   function useDemo(u: string, p: string) {
@@ -129,14 +129,14 @@ export default function LoginPage() {
           <div className="mt-8">
             <div className="text-xs text-muted-foreground mb-3 uppercase tracking-widest" style={{ fontFamily: 'var(--font-mono)' }}>Demo accounts</div>
             <div className="grid grid-cols-1 gap-1.5">
-              {DEMO_ACCOUNTS.map(({ username: u, password: p, role }) => (
+              {DEMO_ACCOUNTS.map(({ username: u, password: p, label }) => (
                 <button
                   key={u}
                   onClick={() => useDemo(u, p)}
                   className="flex items-center justify-between px-3 py-2 text-xs bg-card border border-border rounded-lg hover:border-accent/40 hover:bg-accent/5 transition-colors text-left"
                 >
                   <span className="text-foreground" style={{ fontFamily: 'var(--font-mono)' }}>{u}</span>
-                  <span className="text-muted-foreground">{role}</span>
+                  <span className="text-muted-foreground">{label}</span>
                 </button>
               ))}
             </div>

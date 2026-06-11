@@ -1,6 +1,7 @@
 import { useParams, useNavigate } from 'react-router';
 import { ArrowLeft, Printer } from 'lucide-react';
 import { useData } from '../context/DataContext';
+import { useRoleNav } from '../lib/useRoleNav';
 import { formatDate, formatCurrency } from '../lib/utils';
 import { StatusBadge, PriorityBadge } from '../components/ui/Badge';
 
@@ -9,6 +10,7 @@ const STATUS_FLOW = ['Pending', 'Cutting', 'Sewing', 'Finishing', 'Ready', 'Deli
 export default function OrderDetailPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const toRole = useRoleNav();
   const { orders, customers, staff, payments } = useData();
 
   const order = orders.find(o => o.id === id);
@@ -20,7 +22,7 @@ export default function OrderDetailPage() {
     return (
       <div className="text-center py-20">
         <div className="text-sm text-muted-foreground">Order not found.</div>
-        <button onClick={() => navigate('/orders')} className="mt-3 text-sm text-accent hover:underline">← Back to orders</button>
+        <button onClick={() => navigate(toRole('/orders'))} className="mt-3 text-sm text-accent hover:underline">← Back to orders</button>
       </div>
     );
   }
@@ -30,7 +32,7 @@ export default function OrderDetailPage() {
   return (
     <div className="space-y-5">
       <div className="flex items-center justify-between">
-        <button onClick={() => navigate('/orders')} className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors">
+        <button onClick={() => navigate(toRole('/orders'))} className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors">
           <ArrowLeft size={14} /> Orders
         </button>
         <button onClick={() => window.print()} className="flex items-center gap-1.5 px-3 py-2 text-sm border border-border rounded-lg hover:bg-secondary transition-colors">

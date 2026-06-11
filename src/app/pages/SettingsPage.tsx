@@ -3,6 +3,7 @@ import { Download, Upload, Scissors, RotateCcw } from 'lucide-react';
 import { storage } from '../lib/storage';
 import { downloadJson } from '../lib/utils';
 import { useData } from '../context/DataContext';
+import { DEMO_ACCOUNTS } from '../lib/auth';
 
 export default function SettingsPage() {
   const { customers, orders, payments, inventory, staff } = useData();
@@ -117,16 +118,13 @@ export default function SettingsPage() {
       <div className="bg-card border border-border rounded-lg p-6">
         <h3 className="text-sm mb-4" style={{ fontFamily: 'var(--font-display)', fontWeight: 600 }}>Demo Login Credentials</h3>
         <div className="space-y-2">
-          {[
-            { username: 'admin', password: 'admin123', role: 'Administrator' },
-            { username: 'reception', password: 'rec123', role: 'Reception Officer' },
-            { username: 'tailor', password: 'tai123', role: 'Tailor' },
-            { username: 'inventory', password: 'inv123', role: 'Inventory Officer' },
-            { username: 'manager', password: 'mgr123', role: 'Manager' },
-          ].map(({ username, password, role }) => (
+          {DEMO_ACCOUNTS.map(({ username, password, label, path }) => (
             <div key={username} className="flex items-center justify-between px-3 py-2 bg-secondary/50 rounded text-sm">
-              <span style={{ fontFamily: 'var(--font-mono)' }}>{username} / {password}</span>
-              <span className="text-xs text-muted-foreground">{role}</span>
+              <div>
+                <span style={{ fontFamily: 'var(--font-mono)' }}>{username} / {password}</span>
+                <div className="text-xs text-muted-foreground mt-0.5">{path}</div>
+              </div>
+              <span className="text-xs text-muted-foreground text-right">{label}</span>
             </div>
           ))}
         </div>

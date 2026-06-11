@@ -1,35 +1,45 @@
-import React, { createContext, useContext, useState, useCallback, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useCallback, useEffect, ReactNode } from 'react';
 import type { User, Role } from '../lib/types';
+import { authenticateDemoUser } from '../lib/auth';
 
 interface AuthContextType {
   user: User | null;
   role: Role | null;
-  login: (email: string, password: string) => Promise<void>;
+  login: (username: string, password: string) => Promise<boolean>;
   logout: () => void;
   isLoading: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
+const AUTH_STORAGE_KEY = 'ati_auth_user';
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  const login = useCallback(async (email: string, password: string) => {
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(AUTH_STORAGE_KEY);
+      if (!raw) return;
+      const parsed = JSON.parse(raw) as User;
+      if (!parsed?.role) return;
+      setUser(parsed);
+    } catch {
+      localStorage.removeItem(AUTH_STORAGE_KEY);
+    }
+  }, []);
+
+  const login = useCallback(async (username: string, password: string) => {
     setIsLoading(true);
     try {
-      // TODO: Replace with actual API call
-      // For now, create a mock user for testing
-      const mockUser: User = {
-        id: '1',
-        email,
-        name: email.split('@')[0],
-        role: 'admin',
-      };
-      setUser(mockUser);
+      const authUser = authenticateDemoUser(username.trim(), password);
+      if (!authUser) return false;
+      setUser(authUser);
+      localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(authUser));
+      return true;
     } catch (error) {
       console.error('Login failed:', error);
-      throw error;
+      return false;
     } finally {
       setIsLoading(false);
     }
@@ -37,6 +47,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const logout = useCallback(() => {
     setUser(null);
+    localStorage.removeItem(AUTH_STORAGE_KEY);
   }, []);
 
   return (

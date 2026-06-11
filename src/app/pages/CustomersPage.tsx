@@ -5,6 +5,7 @@ import { SearchInput } from '../components/ui/SearchInput';
 import { Modal } from '../components/ui/Modal';
 import { useData } from '../context/DataContext';
 import { useAuth } from '../context/AuthContext';
+import { useRoleNav } from '../lib/useRoleNav';
 import { formatDate, generateId, downloadJson } from '../lib/utils';
 import type { Customer } from '../lib/types';
 
@@ -16,6 +17,7 @@ export default function CustomersPage() {
   const { customers, addCustomer, updateCustomer, deleteCustomer, logActivity } = useData();
   const { role } = useAuth();
   const navigate = useNavigate();
+  const toRole = useRoleNav();
   const [search, setSearch] = useState('');
   const [modal, setModal] = useState<'add' | 'edit' | null>(null);
   const [selected, setSelected] = useState<Customer | null>(null);
@@ -101,7 +103,7 @@ export default function CustomersPage() {
                   <td className="px-4 py-3 text-xs text-muted-foreground" style={{ fontFamily: 'var(--font-mono)' }}>{formatDate(c.registrationDate)}</td>
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-1">
-                      <button onClick={() => navigate(`/customers/${c.id}`)} className="p-1.5 rounded hover:bg-secondary transition-colors text-muted-foreground hover:text-foreground"><Eye size={13} /></button>
+                      <button onClick={() => navigate(toRole(`/customers/${c.id}`))} className="p-1.5 rounded hover:bg-secondary transition-colors text-muted-foreground hover:text-foreground"><Eye size={13} /></button>
                       {canEdit && <button onClick={() => openEdit(c)} className="p-1.5 rounded hover:bg-secondary transition-colors text-muted-foreground hover:text-foreground"><Edit2 size={13} /></button>}
                       {role === 'admin' && <button onClick={() => handleDelete(c)} className="p-1.5 rounded hover:bg-destructive/10 transition-colors text-muted-foreground hover:text-destructive"><Trash2 size={13} /></button>}
                     </div>
