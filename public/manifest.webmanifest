@@ -1,0 +1,10 @@
+{
+  "name": "ATI Sewing & Fabric Management System",
+  "short_name": "ATI Sewing",
+  "description": "Streamline tailoring and fabric management with a multi-user system for customer management, order tracking, inventory control, and staff oversight.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#1f2937",
+  "orientation": "portrait-primary"
+}
